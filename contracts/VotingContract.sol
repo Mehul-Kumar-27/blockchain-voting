@@ -1,4 +1,4 @@
-//LPDX-Lincense-Identifier: UNLICENSED
+//LPDX-Lincense-Identifier: MIT
 
 pragma solidity ^0.8.9;
 
@@ -13,7 +13,7 @@ contract Create {
 
     address public votingOrganizer;
 
-    costructor() {
+    constructor() {
         votingOrganizer = msg.sender;
     }
 
@@ -75,7 +75,107 @@ contract Create {
         uint256 vote
     );
 
+    function setCandidate(
+        address _address,
+        string memory _name,
+        uint256 _age,
+        string memory _image,
+        string memory _ipfs
+    ) public {
+        require(
+            msg.sender == votingOrganizer,
+            "Only Organizer can add candidate"
+        );
+        _candidateId.increment();
+        uint256 idNumber = _candidateId.current();
+
+        Candidate storage candidate = candidates[_address];
+        candidate._candidateId = idNumber;
+        candidate.name = _name;
+        candidate.age = _age;
+        candidate.image = _image;
+        candidate.voteCount = 0;
+        candidate._address = _address;
+        candidate.ipfs = _ipfs;
+
+        candidatesAddress.push(_address);
+
+        emit CandidateCreated(
+            idNumber,
+            _name,
+            _age,
+            _image,
+            0,
+            _address,
+            _ipfs
+        );
+    }
+
+    function getAllCandidates() public view returns (address[] memory) {
+        return candidatesAddress;
+    }
+
+    function getCandidateNumbers() public view returns (uint256) {
+        return candidatesAddress.length;
+    }
+
+    function getCandidateData(
+        address _address
+    ) public view returns (Candidate memory) {
+        return candidates[_address];
+    }
+
+    function createVoter(
+        string memory _name,
+        uint256 _age,
+        string memory _image,
+        string memory _ipfs,
+        address _address
+    ) public {
+        require(
+            msg.sender == votingOrganizer,
+            "Only Organizer can add candidate"
+        );
+        _votingId.increment();
+        uint256 idNumber = _votingId.current();
+
+        Voters storage voter = voters[_address];
+        voter._voterId = idNumber;
+        voter.name = _name;
+        voter.age = _age;
+        voter.image = _image;
+        voter._address = _address;
+        voter.ipfs = _ipfs;
+        voter.voted = false;
+        voter.allowed = 1;
+        voter.vote = 1000;
+
+        votersAddress.push(_address);
+
+        emit VoterCreated(
+            idNumber,
+            _name,
+            _age,
+            _image,
+            _address,
+            _ipfs,
+            false,
+            1,
+            voter.vote
+        );
+    }
+
+    function castVote(address _cadidateAddress , uint256 _candidateVoteID) external {
+        Voters storage voter = voters[msg.sender];
+
+        require(!voter.voted, "Already voted.");
+
+        require(voter.allowed != 0, "You are not allowed to vote");
 
 
-    
+
+
+
+
+    }
 }
