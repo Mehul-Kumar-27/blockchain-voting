@@ -1,4 +1,4 @@
-//LPDX-Lincense-Identifier: MIT
+//LPDX-Lincense-Identifier: UNLICENSED
 
 pragma solidity ^0.8.9;
 
@@ -165,17 +165,39 @@ contract Create {
         );
     }
 
-    function castVote(address _cadidateAddress , uint256 _candidateVoteID) external {
+    function castVote(
+        address _cadidateAddress,
+        uint256 _candidateVoteID
+    ) external {
         Voters storage voter = voters[msg.sender];
 
         require(!voter.voted, "Already voted.");
 
         require(voter.allowed != 0, "You are not allowed to vote");
 
+        voter.voted = true;
+        voter.vote = _candidateVoteID;
 
+        votetedVoters.push(msg.sender);
 
+        candidates[_cadidateAddress].voteCount += voter.allowed;
+    }
 
+    function getVoterLenghth() public view returns (uint256) {
+        return votersAddress.length;
+    }
 
+    function getVoterData(
+        address _address
+    ) public view returns (Voters memory) {
+        return voters[_address];
+    }
 
+    function getVotedVoters() public view returns (address[] memory) {
+        return votetedVoters;
+    }
+
+    function getAllVoters() public view returns (address[] memory) {
+        return votersAddress;
     }
 }
