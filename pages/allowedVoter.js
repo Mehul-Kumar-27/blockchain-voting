@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import { VoterContext } from "@/context/Voter";
 import Styles from "@/styles/allowedVoterList.module.css";
+import addImag from "../assets/images/3.jpg";
 
 import Button from "../components/Button/Button";
 import Input from "../components/Input/Input";
@@ -22,7 +23,7 @@ const allowedVoter = () => {
 
     /// OBTAIN THE INFURA URL
 
-    const onDrop = useCallback(async (acceptedFiles) => {
+    const onDropUploadToInfura = useCallback(async (acceptedFiles) => {
         const file = acceptedFiles[0];
         try {
             const added = await uploadToIPFS(file);
@@ -33,11 +34,21 @@ const allowedVoter = () => {
         }
     }, []);
 
+    const onDrop = useCallback(async (acceptedFiles) => {
+        // Do something with the files
+        console.log("Accepting files");
+    }, []);
+
     const { getRootProps, getInputProps } = useDropzone({
-        onDrop,
-        accept: "image/*",
+        onDrop: { onDrop },
+        accept: {
+            "image/*": [".jpeg", ".jpg", ".png"],
+        },
+
         maxSize: 50000000,
     });
+
+    const handleImageClick = () => { };
 
     return (
         <div className={Styles.createVoter}>
@@ -86,21 +97,59 @@ const allowedVoter = () => {
 
                 <div className={Styles.voter}>
                     <div className={Styles.voter__container}>
-                        <h1>
-                            Create New Voter
-                        </h1>
+                        <h1>Create New Voter</h1>
                         <div className={Styles.voter__container__box}>
                             <div className={Styles.voter__container__box__div}>
-                                <div {...getInputProps}>
+                                <div {...getRootProps()}>
                                     <input {...getInputProps()} />
-                                </div>
-                                <div className={Styles.voter__container__box__div__info}>
-                                    <p>
-                                        Upload file: JPG, PNG, JPEG, GIF, SVG
-                                    </p>
+
+                                    <div className={Styles.voter__container__box__div__info}>
+                                        <p>Upload file: JPG, PNG, JPEG, GIF, SVG</p>
+                                        <div className={Styles.voter__container__box__div__image}>
+                                            <Image
+                                                src={addImag}
+                                                width={150}
+                                                height={150}
+                                                alt="File Upload"
+                                                priority
+                                            />
+                                        </div>
+                                        <p>Drag and drop your file here</p>
+                                        <p>Browse Media</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div className={Styles.input__container}>
+                    <Input
+                        inputType="text"
+                        title="Name"
+                        placeholder="Voter Name"
+                        handleClick={(e) =>
+                            setinputForm({ ...inputForm, name: e.target.value })
+                        }
+                    />
+                    <Input
+                        inputType="text"
+                        title="Address"
+                        placeholder="Voter Address"
+                        handleClick={(e) =>
+                            setinputForm({ ...inputForm, address: e.target.value })
+                        }
+                    />
+                    <Input
+                        inputType="text"
+                        title="Position"
+                        placeholder="Voter Position"
+                        handleClick={(e) =>
+                            setinputForm({ ...inputForm, postion: e.target.value })
+                        }
+                    />
+                    <div className={Styles.Button}>
+                        <Button btnName="Authorised" handleClick={() => { }} />
                     </div>
                 </div>
             </div>
