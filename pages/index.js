@@ -11,7 +11,7 @@ const Home = () => {
   const { votingTitle } = useContext(VoterContext);
   return (
     <div>
-      <p>votingTitle</p>
+      <p>{votingTitle}</p>
     </div>
   );
 }
