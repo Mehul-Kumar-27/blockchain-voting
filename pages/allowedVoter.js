@@ -2,7 +2,6 @@ import React, { useState, useContext, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-
 import { VoterContext } from "@/context/Voter";
 import Styles from "../styles/allowedVoterList.module.css";
 import addImag from "../assets/images/3.jpg";
@@ -10,49 +9,44 @@ import addImag from "../assets/images/3.jpg";
 import Button from "../components/Button/Button";
 import Input from "../components/Input/Input";
 
+
 const allowedVoter = () => {
   const router = useRouter();
   const [fileUrl, setfileUrl] = useState(null);
+  const [profileURL, setprofileURL] = useState(null);
   const [inputForm, setinputForm] = useState({
     name: "",
     address: "",
-    postion: "",
+    position: "",
   });
 
-  const { uploadToIPFS } = useContext(VoterContext);
-
-  /// OBTAIN THE INFURA URL
-
-  const onDropUploadToInfura = useCallback(async (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    try {
-      const added = await uploadToIPFS(file);
-      //setfileUrl(`https://ipfs.infura.io/ipfs/${added.path}`);
-      setfileUrl(added);
-    } catch (error) {
-      console.log("Error uploading file: ", error);
-    }
-  }, []);
+  const { uploadToIPFS, createVoter } = useContext(VoterContext);
 
   const onDrop = useCallback(async (acceptedFiles) => {
-    console.log("Accepting files");
+    const file = acceptedFiles[0];
+    console.log(file.name);
+    console.log(URL.createObjectURL(file));
+    setprofileURL(URL.createObjectURL(file));
+    console.log(profileURL);
   }, []);
 
+
+
   const { getRootProps, getInputProps } = useDropzone({
-    onDrop: { onDrop },
+    onDrop,
     accept: {
       "image/*": [".jpeg", ".jpg", ".png"],
     },
 
-    maxSize: 50000000,
+    maxSize: 5000000000000,
   });
 
-  const handleImageClick = () => {};
+  const handleImageClick = () => { };
 
   return (
     <div className="area">
       <div className="cicles">
-      <ul>
+        <ul>
           <li></li>
           <li></li>
           <li></li>
@@ -82,7 +76,9 @@ const allowedVoter = () => {
             <div className={Styles.sideInfoBox}>
               <h4>Create Candidate For Voting</h4>
               <p>BlockChain Voting System, Based on Ethereum Blockchain</p>
-              <h4 className={Styles.sideInfoParagraph}>Contract Candidate List</h4>
+              <h4 className={Styles.sideInfoParagraph}>
+                Contract Candidate List
+              </h4>
               <div className={Styles.sideInfoCard}>
                 {/* {voterArray.map((voter, index) => {
                                     <div key={index + 1} className={Styles.card_box}>
@@ -112,13 +108,31 @@ const allowedVoter = () => {
                   <div className={Styles.voter__container__box__div__info}>
                     <p>Upload file: JPG, PNG, JPEG, GIF, SVG</p>
                     <div className={Styles.voter__container__box__div__image}>
-                      <Image
+                      {!profileURL && <Image
                         src={addImag}
                         width={150}
                         height={150}
                         alt="File Upload"
                         priority
-                      />
+                        style={{
+                          objectFit: "cover",
+                          borderRadius: "50px",
+                        }}
+                      />}
+                      {profileURL && <Image
+                        src={profileURL}
+                        width={150}
+                        height={150}
+                        alt="File Upload"
+                        priority
+                        style={{
+                          objectFit: "cover",
+                          borderRadius: "50px",
+                          maxWidth: "150px", // Set a maximum width
+                          maxHeight: "150px", // Set a maximum height
+                        }}
+                      />}
+
                     </div>
                     <p>Drag and drop your file here</p>
                     <p>Browse Media</p>
@@ -149,18 +163,27 @@ const allowedVoter = () => {
               title="Position"
               placeholder="Voter Position"
               handleClick={(e) =>
-                setinputForm({ ...inputForm, postion: e.target.value })
+                setinputForm({ ...inputForm, position: e.target.value })
               }
             />
             <div className={Styles.Button}>
-              <Button btnName="Authorise" handleClick={() => {}} />
+              <Button btnName="Authorise" handleClick={() => createVoter(inputForm, profileURL, router)} />
             </div>
           </div>
         </div>
 
         <div className={Styles.createdVoter}>
           <div className={Styles.createdVoter__info}>
-            <Image src={addImag} alt="user Profile" width={150} height={150} />
+            <Image
+              src={addImag}
+              alt="user Profile"
+              width={150}
+              height={150}
+              style={{
+                objectFit: "cover",
+                borderRadius: "50px",
+              }}
+            />
             <p>Notice For User</p>
             <p>
               Organiser <span>0x05348395789347....</span>
@@ -170,8 +193,6 @@ const allowedVoter = () => {
         </div>
       </div>
     </div>
-
-    
   );
 };
 
