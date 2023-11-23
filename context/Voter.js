@@ -74,6 +74,7 @@ export const VotingProvider = ({ children }) => {
             seterror("Error uploading file to infura. Try again");
         }
     };
+    ///////////////// Create Voter
 
     const createVoter = async (inputForm, fileUrl, router) => {
         try {
@@ -97,25 +98,32 @@ export const VotingProvider = ({ children }) => {
             console.log("4");
             console.log(contract);
 
-            const data = JSON.stringify({
-                _name: name,
-                _age: age,
-                _image: fileUrl,
-                _ipfs: fileUrl,
-                address: address,
-            });
-            console.log(data);
 
-            const voter = await contract.createVoter(data);
+
+            const voter = await contract
+                .createVoter(name, 20, fileUrl, fileUrl, address)
+                .catch((err) => {
+                    console.log(err);
+                });
             console.log("5");
             voter.wait();
             console.log("6");
             console.log(voter);
 
             router.push("/voterList");
-
-        } catch (error) { }
+        } catch (error) {
+            console.log(error);
+        }
     };
+
+    const getVoterList= async()=>{
+        const web3Modle = new Web3Modal();
+        const connection = await web3Modle.connect();
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = fetchContract(signer);
+        console.log(contract);
+    }
     const votingTitle = "Voting Contract";
     return (
         <VoterContext.Provider
