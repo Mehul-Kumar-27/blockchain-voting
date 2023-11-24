@@ -44,9 +44,14 @@ const allowedVoter = () => {
   const handleImageClick = () => { };
 
   return (
-    <div className="area">
-      <div className="cicles">
+    <div className={Styles.area}>
+      <div className={Styles.circles}>
         <ul>
+        <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
           <li></li>
           <li></li>
           <li></li>
@@ -153,7 +158,7 @@ const allowedVoter = () => {
             <Input
               inputType="text"
               title="Address"
-              placeholder="Voter Address"
+              placeholder="Voter wallet Address"
               handleClick={(e) =>
                 setinputForm({ ...inputForm, address: e.target.value })
               }
@@ -166,8 +171,32 @@ const allowedVoter = () => {
                 setinputForm({ ...inputForm, position: e.target.value })
               }
             />
+            <Input
+              inputType="text"
+              title="Phone Number"
+              placeholder="Phone Number"
+            // handleClick={(e) =>
+            //   setinputForm({ ...inputForm, position: e.target.value })
+            // }
+            />
+            <Input
+              inputType="text"
+              title="AGE"
+              placeholder="Enter The Age of Voter"
+            // handleClick={(e) =>
+            //   setinputForm({ ...inputForm, position: e.target.value })
+            // }
+            />
+            <Input
+              inputType="text"
+              title="Address PINCODE"
+              placeholder="INCODE of Residence"
+            // handleClick={(e) =>
+            //   setinputForm({ ...inputForm, position: e.target.value })
+            // }
+            />
             <div className={Styles.Button}>
-              <Button btnName="Authorise" handleClick={() => createVoter(inputForm, profileURL, router)} />
+              <Button btnName="Authorize" handleClick={() => createVoter(inputForm, profileURL, router)} />
             </div>
           </div>
         </div>

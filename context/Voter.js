@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import { useRouter } from "next/router";
 import Web3Modal from "web3modal";
 
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "./constants";
+import { set } from "mongoose";
 
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
@@ -116,23 +117,44 @@ export const VotingProvider = ({ children }) => {
         }
     };
 
-    const getVoterList= async()=>{
+    const getVoterList = async () => {
         const web3Modle = new Web3Modal();
         const connection = await web3Modle.connect();
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contract = fetchContract(signer);
         console.log(contract);
-    }
+
+        const voterList = await contract.getAllVoters().catch((err) => {
+            console.log(err);
+        });
+        //voterList.wait();
+        setvoterAddress(voterList);
+        console.log(voterList);
+        voterList.map(async (el) => {
+            const singleVoterData = await contract.getVoterData(el).catch((err) => {
+                console.log(err);
+            });
+
+            pushVoter.push(singleVoterData);
+            console.log(singleVoterData);
+        })
+ }
+
+    useEffect(() => {
+        getVoterList();
+    }, []);
     const votingTitle = "Voting Contract";
     return (
         <VoterContext.Provider
             value={{
                 votingTitle,
                 createVoter,
+                getVoterList,
                 checkIfWalletIsConnected,
                 connectWallet,
                 uploadToIPFS,
+                voterArray,
             }}
         >
             {children}

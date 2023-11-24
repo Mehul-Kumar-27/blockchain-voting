@@ -4,18 +4,18 @@ import Style from "./Input.module.css";
 
 const Input = ({ inputType, title, placeholder, handleClick }) => {
   return (
-    <div className={Style.input}>
-      <p>{title}</p>
-      {inputType === "text" ? (
-        <div className={Style.input__box}>
+    <div className={Style.inputContainer}>
+      <label className={Style.inputLabel}>{title}</label>
+      {inputType === 'text' && (
+        <div className={Style.inputBox}>
           <input
             type={inputType}
-            className={Style.input__box__form}
+            className={Style.inputForm}
             placeholder={placeholder}
             onChange={handleClick}
           />
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
