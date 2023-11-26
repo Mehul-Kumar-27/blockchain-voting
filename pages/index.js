@@ -9,6 +9,7 @@ import Link from "next/link";
 
 const HomePage = () => {
 
+  const {getCandidateList} = useContext(VoterContext);
 
 
   return (
@@ -68,7 +69,7 @@ const HomePage = () => {
         </div>
 
         {/* <Link href="/allowedVoter"> */}
-        <button className="cta-button">Go to Second Page</button>
+        <button className="cta-button" onClick={getCandidateList}>Go to Second Page</button>
         {/* </Link> */}
         <Link href="/allowedVoter">
           <button className="cta-button">Register New Voter</button>

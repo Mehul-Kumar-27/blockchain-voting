@@ -41,7 +41,7 @@ const allowedVoter = () => {
     maxSize: 5000000000000,
   });
 
-  const handleImageClick = () => { };
+
 
   return (
     <div className={Styles.area}>

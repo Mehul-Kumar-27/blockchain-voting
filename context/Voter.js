@@ -145,8 +145,8 @@ export const VotingProvider = ({ children }) => {
 
     const addCandidate = async (inputForm, fileUrl, router) => {
         try {
-            const { name, address, manifesto } = inputForm;
-            console.log(name, address, manifesto, fileUrl);
+            const { name, address, manifesto, age } = inputForm;
+            console.log(name, address, manifesto, age, fileUrl);
 
             if (!name || !address || !manifesto) {
                 return seterror("Please fill all the fields");
@@ -161,6 +161,7 @@ export const VotingProvider = ({ children }) => {
             const candidate = await contract
                 .setCandidate(address, name, age, fileUrl, manifesto)
                 .catch((err) => {
+                    seterror("Error creating candidate");
                     console.log(err);
                 });
 
@@ -168,6 +169,7 @@ export const VotingProvider = ({ children }) => {
 
             router.push("/candidateList");
         } catch (error) {
+            seterror("Error creating candidate");
             console.log(error);
         }
     };
@@ -180,11 +182,17 @@ export const VotingProvider = ({ children }) => {
         const contract = fetchContract(signer);
 
         try {
-            const candidateAddressList = await contract.getAllCandidates();
-            setcandidateLength(candidateAddressList.length);
+            const candidateAddressList = await contract.getAllCandidates().catch((err) => {
+                seterror("Error creating candidate 1");
+                console.log(err);
+            });
+            // setcandidateLength(candidateAddressList.length);
 
             const candidateDataPromises = candidateAddressList.map(async (el) => {
-                return contract.getCandidateData(el);
+                return contract.getCandidateData(el).catch((err) => {
+                    seterror("Error creating candidate 2");
+                    console.log(err);
+                });
             });
 
             const candidateData = await Promise.all(candidateDataPromises);
@@ -210,6 +218,9 @@ export const VotingProvider = ({ children }) => {
                 connectWallet,
                 uploadToIPFS,
                 voterArray,
+                addCandidate,
+                getCandidateList,
+                candiadateArray,
             }}
         >
             {children}

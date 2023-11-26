@@ -2,12 +2,13 @@ import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { VoterContext } from "@/context/Voter";
 
-const VoterList = () => {
-  const { voterArray, getVoterList } = useContext(VoterContext);
+const CandidateList = () => {
+  const {candiadateArray, getCandidateList } = useContext(VoterContext);
 
   useEffect(() => {
     const fetchData = async () => {
-      await getVoterList();
+      await getCandidateList();
+      console.log(candiadateArray);
     };
   
     fetchData();
@@ -16,9 +17,9 @@ const VoterList = () => {
 
   return (
     <div className="voter-list-container">
-      <h2>Voter List</h2>
+      <h2>Candidate List</h2>
       <div className="voter-cards-container">
-        {voterArray.map((voter, index) => (
+        {candiadateArray.map((voter, index) => (
           <div key={index} className="voter-card">
             <div className="voter-card-content">
               <p className="voter-card-name">{voter.name}</p>
@@ -86,4 +87,4 @@ const VoterList = () => {
   );
 };
 
-export default VoterList;
+export default CandidateList;
