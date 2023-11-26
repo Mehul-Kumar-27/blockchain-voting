@@ -6,8 +6,8 @@ import { VoterContext } from "@/context/Voter";
 import Styles from "../styles/allowedVoterList.module.css";
 import addImag from "../assets/images/3.jpg";
 
-import Button from "../components/Button/Button";
-import Input from "../components/Input/Input";
+import Button from "../../components/Button/Button";
+import Input from "../../components/Input/Input";
 
 
 const allowedVoter = () => {

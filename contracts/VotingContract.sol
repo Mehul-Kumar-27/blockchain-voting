@@ -10,6 +10,7 @@ contract Create {
 
     Counters.Counter public _votingId;
     Counters.Counter public _candidateId;
+    Counters.Counter public _pollId;
 
     address public votingOrganizer;
 
@@ -23,20 +24,22 @@ contract Create {
         uint256 _candidateId;
         string name;
         uint256 age;
-        string image;
         uint256 voteCount;
         address _address;
-        string ipfs;
+        string email;
+        string manefesto;
+        string pincode;
     }
 
     event CandidateCreated(
         uint256 indexed _candidateId,
         string name,
         uint256 age,
-        string image,
         uint256 voteCount,
         address _address,
-        string ipfs
+        string email,
+        string manefesto,
+        string pincode
     );
 
     address[] public candidatesAddress;
@@ -55,32 +58,33 @@ contract Create {
         uint256 _voterId;
         string name;
         uint256 age;
-        string image;
         address _address;
-        string ipfs;
         bool voted;
         uint256 allowed;
         uint256 vote;
+        string email;
+        string pincode;
     }
 
     event VoterCreated(
         uint256 indexed _voterId,
         string name,
         uint256 age,
-        string image,
         address _address,
-        string ipfs,
         bool voted,
         uint256 allowed,
-        uint256 vote
+        uint256 vote,
+        string email,
+        string pincode
     );
 
     function setCandidate(
         address _address,
         string memory _name,
         uint256 _age,
-        string memory _image,
-        string memory _ipfs
+        string memory email,
+        string memory manefesto,
+        string memory pincode
     ) public {
         require(
             msg.sender == votingOrganizer,
@@ -93,21 +97,22 @@ contract Create {
         candidate._candidateId = idNumber;
         candidate.name = _name;
         candidate.age = _age;
-        candidate.image = _image;
         candidate.voteCount = 0;
         candidate._address = _address;
-        candidate.ipfs = _ipfs;
-
+        candidate.email = email;
+        candidate.manefesto = manefesto;
+        candidate.pincode = pincode;
         candidatesAddress.push(_address);
 
         emit CandidateCreated(
             idNumber,
             _name,
             _age,
-            _image,
             0,
             _address,
-            _ipfs
+            email,
+            manefesto,
+            pincode
         );
     }
 
@@ -128,9 +133,9 @@ contract Create {
     function createVoter(
         string memory _name,
         uint256 _age,
-        string memory _image,
-        string memory _ipfs,
-        address _address
+        address _address,
+        string memory email,
+        string memory pincode
     ) public {
         require(
             msg.sender == votingOrganizer,
@@ -143,12 +148,12 @@ contract Create {
         voter._voterId = idNumber;
         voter.name = _name;
         voter.age = _age;
-        voter.image = _image;
         voter._address = _address;
-        voter.ipfs = _ipfs;
         voter.voted = false;
         voter.allowed = 1;
         voter.vote = 1000;
+        voter.email = email;
+        voter.pincode = pincode;
 
         votersAddress.push(_address);
 
@@ -156,12 +161,12 @@ contract Create {
             idNumber,
             _name,
             _age,
-            _image,
             _address,
-            _ipfs,
             false,
             1,
-            voter.vote
+            voter.vote,
+            email,
+            pincode
         );
     }
 
@@ -199,5 +204,119 @@ contract Create {
 
     function getAllVoters() public view returns (address[] memory) {
         return votersAddress;
+    }
+
+    struct Poll {
+        uint256 _pollId;
+        string title;
+        string description;
+        address[] voters;
+        address[] candidates;
+        uint256 startDate;
+        uint256 endDate;
+        uint256 votersVotedCount;
+        bool isActive;
+    }
+
+    event PollCreated(
+        uint256 indexed _pollId,
+        string title,
+        string description,
+        address[] voters,
+        address[] candidates,
+        uint256 startDate,
+        uint256 endDate,
+        bool isActive,
+        uint256 votersVotedCount
+    );
+
+    mapping(uint256 => Poll) public polls;
+    uint256[] public pollIds;
+
+    function createPoll(
+        string memory _title,
+        string memory _description,
+        address[] memory _voters,
+        address[] memory _candidates,
+        uint256 _startDate,
+        uint256 _endDate
+    ) public {
+        require(
+            msg.sender == votingOrganizer,
+            "Only Organizer can add candidate"
+        );
+
+        _pollId.increment();
+
+        uint256 idNumber = _pollId.current();
+
+        Poll storage poll = polls[idNumber];
+        pollIds.push(idNumber);
+
+        poll._pollId = idNumber;
+        poll.title = _title;
+        poll.description = _description;
+        poll.voters = _voters;
+        poll.candidates = _candidates;
+        poll.startDate = _startDate;
+        poll.endDate = _endDate;
+        poll.isActive = true;
+        poll.votersVotedCount = 0;
+
+        emit PollCreated(
+            idNumber,
+            _title,
+            _description,
+            _voters,
+            _candidates,
+            _startDate,
+            _endDate,
+            false,
+            0
+        );
+    }
+
+    function getAllPollesIds() public view returns (uint256[] memory) {
+        return pollIds;
+    }
+
+    function getPollData(uint256 id) public view returns (Poll memory) {
+        return polls[id];
+    }
+
+    function startAPoll(uint256 id) public {
+        require(
+            msg.sender == votingOrganizer,
+            "Only Organizer can add candidate"
+        );
+
+        Poll storage poll = polls[id];
+
+        poll.isActive = true;
+    }
+
+    function addVoterToPoll(uint256 pollId, address _voterAddress) public {
+        require(
+            msg.sender == votingOrganizer,
+            "Only Organizer can add candidate"
+        );
+
+        Poll storage poll = polls[pollId];
+
+        poll.voters.push(_voterAddress);
+    }
+
+    function addCandidateToPoll(
+        uint256 pollId,
+        address _candidateAddress
+    ) public {
+        require(
+            msg.sender == votingOrganizer,
+            "Only Organizer can add candidate"
+        );
+
+        Poll storage poll = polls[pollId];
+
+        poll.candidates.push(_candidateAddress);
     }
 }
