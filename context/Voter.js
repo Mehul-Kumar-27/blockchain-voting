@@ -104,6 +104,7 @@ export const VotingProvider = ({ children }) => {
             const voter = await contract
                 .createVoter(name, 20, fileUrl, fileUrl, address)
                 .catch((err) => {
+                    seterror("Error creating voter");
                     console.log(err);
                 });
             console.log("5");
@@ -123,27 +124,81 @@ export const VotingProvider = ({ children }) => {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contract = fetchContract(signer);
-        console.log(contract);
 
-        const voterList = await contract.getAllVoters().catch((err) => {
-            console.log(err);
-        });
-        //voterList.wait();
-        setvoterAddress(voterList);
-        console.log(voterList);
-        voterList.map(async (el) => {
-            const singleVoterData = await contract.getVoterData(el).catch((err) => {
-                console.log(err);
+        try {
+            const voterAddressList = await contract.getAllVoters();
+            setvoterAddress(voterAddressList);
+
+            const voterDataPromises = voterAddressList.map(async (el) => {
+                return contract.getVoterData(el);
             });
 
-            pushVoter.push(singleVoterData);
-            console.log(singleVoterData);
-        })
- }
+            const voterData = await Promise.all(voterDataPromises);
+            setvoterArray(voterData);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-    useEffect(() => {
-        getVoterList();
-    }, []);
+
+    ////// Add a new candidate
+
+    const addCandidate = async (inputForm, fileUrl, router) => {
+        try {
+            const { name, address, manifesto } = inputForm;
+            console.log(name, address, manifesto, fileUrl);
+
+            if (!name || !address || !manifesto) {
+                return seterror("Please fill all the fields");
+            }
+
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const candidate = await contract
+                .setCandidate(address, name, age, fileUrl, manifesto)
+                .catch((err) => {
+                    console.log(err);
+                });
+
+            candidate.wait();
+
+            router.push("/candidateList");
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getCandidateList = async () => {
+        const web3Modle = new Web3Modal();
+        const connection = await web3Modle.connect();
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = fetchContract(signer);
+
+        try {
+            const candidateAddressList = await contract.getAllCandidates();
+            setcandidateLength(candidateAddressList.length);
+
+            const candidateDataPromises = candidateAddressList.map(async (el) => {
+                return contract.getCandidateData(el);
+            });
+
+            const candidateData = await Promise.all(candidateDataPromises);
+            setcandiadateArray(candidateData);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
+    // useEffect(() => {
+    //     console.log("useEffect for the get voter list");
+    //     getVoterList();
+    // },[]);
     const votingTitle = "Voting Contract";
     return (
         <VoterContext.Provider

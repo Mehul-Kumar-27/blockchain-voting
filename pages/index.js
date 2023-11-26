@@ -8,6 +8,9 @@ import Card from "@/components/Card/Card";
 import Link from "next/link";
 
 const HomePage = () => {
+
+
+
   return (
     <div className="area">
       <div className="circles">
@@ -64,8 +67,11 @@ const HomePage = () => {
           </p>
         </div>
 
+        {/* <Link href="/allowedVoter"> */}
+        <button className="cta-button">Go to Second Page</button>
+        {/* </Link> */}
         <Link href="/allowedVoter">
-          <button className="cta-button">Go to Second Page</button>
+          <button className="cta-button">Register New Voter</button>
         </Link>
       </div>
 

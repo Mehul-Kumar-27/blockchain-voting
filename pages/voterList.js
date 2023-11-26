@@ -3,28 +3,32 @@ import { useRouter } from "next/router";
 import { VoterContext } from "@/context/Voter";
 
 const VoterList = () => {
-    const { voterArray, getVoterList } = useContext(VoterContext);
-    const [voterList, setVoterList] = useState(voterArray);
+  const { voterArray, getVoterList } = useContext(VoterContext);
 
-    useEffect(() => {
-        getVoterList();
-    }, [voterArray]);
+  useEffect(() => {
+    const fetchData = async () => {
+      await getVoterList();
+    };
+  
+    fetchData();
+  }, [getVoterList]);
+  
 
-    return (
-        <div className="voter-list-container">
-            <h2>Voter List</h2>
-            <div className="voter-cards-container">
-                {voterList.map((voter, index) => (
-                    <div key={index} className="voter-card">
-                        <div className="voter-card-content">
-                            <p className="voter-card-name">{voter.name}</p>
-                            <p className="voter-card-address">{voter._address}</p>
-                        </div>
-                    </div>
-                ))}
+  return (
+    <div className="voter-list-container">
+      <h2>Voter List</h2>
+      <div className="voter-cards-container">
+        {voterArray.map((voter, index) => (
+          <div key={index} className="voter-card">
+            <div className="voter-card-content">
+              <p className="voter-card-name">{voter.name}</p>
+              <p className="voter-card-address">{voter._address}</p>
             </div>
+          </div>
+        ))}
+      </div>
 
-            <style jsx>{`
+      <style jsx>{`
         .voter-list-container {
           margin-top: 20px;
         }
@@ -78,8 +82,8 @@ const VoterList = () => {
           font-family: "Poppins", sans-serif;
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default VoterList;
