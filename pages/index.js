@@ -74,6 +74,9 @@ const HomePage = () => {
         <Link href="/voters/allowedVoter">
           <button className="cta-button">Register New Voter</button>
         </Link>
+        <Link href="/candidates/candidateRegistration">
+          <button className="cta-button">Register New Candidate</button>
+        </Link>
       </div>
 
       <style jsx>{`

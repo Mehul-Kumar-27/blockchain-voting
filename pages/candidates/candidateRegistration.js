@@ -65,7 +65,7 @@ const CandidateRegistration = () => {
 
                 <div className={Styles.candidate}>
                     <div className={Styles.candidate__container}>
-                        <h1>Create New Voter</h1>
+                        <h1>Create New Candidate</h1>
                         <div className={Styles.candidate__container__box}>
                             <div className={Styles.candidate__container__box__div}>
                                 <div {...getRootProps()}>

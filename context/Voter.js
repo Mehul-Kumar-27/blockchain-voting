@@ -6,6 +6,7 @@ import Web3Modal from "web3modal";
 
 import { CONTRACT_ADDRESS, CONTRACT_ABI } from "./constants";
 import { set } from "mongoose";
+import { sendError } from "next/dist/server/api-utils";
 
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
@@ -21,6 +22,9 @@ export const VotingProvider = ({ children }) => {
     const pushCandadiate = [];
     const candidateIndex = [];
     const [candiadateArray, setcandiadateArray] = useState(pushCandadiate);
+
+    const [candidatAddressArrayList, setcandidatAddressArrayList] = useState([]);
+
 
     ////////////////////////////////
 
@@ -130,6 +134,7 @@ export const VotingProvider = ({ children }) => {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contract = fetchContract(signer);
+        console.log("Inside getVoterList")
 
         try {
             const voterAddressList = await contract.getAllVoters();
@@ -145,6 +150,22 @@ export const VotingProvider = ({ children }) => {
             console.log(error);
         }
     };
+
+    const getAllVoterAddress = async () => {
+        const web3Modle = new Web3Modal();
+        const connection = await web3Modle.connect();
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = fetchContract(signer);
+
+        try {
+            const voterAddressList = await contract.getAllVoters();
+
+            setvoterAddress(voterAddressList);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
 
     ////// Add a new candidate
@@ -208,6 +229,28 @@ export const VotingProvider = ({ children }) => {
             console.log(error);
         }
     };
+
+    const getCandidateAddress = async () => {
+        const web3Modle = new Web3Modal();
+        const connection = await web3Modle.connect();
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = fetchContract(signer);
+
+        try {
+            const candidateAddressList = await contract.getAllCandidates().catch((err) => {
+                seterror("Error creating candidate 1");
+                console.log(err);
+            });
+            console.log("candidateAddressList from function", candidateAddressList);
+
+            setcandidatAddressArrayList(candidateAddressList);
+
+        } catch (error) {
+            sendError("Error fetching the addresses of candidates address");
+            console.log(error);
+        }
+    }
 
     ///////////////////////////////////////////
 
@@ -281,6 +324,38 @@ export const VotingProvider = ({ children }) => {
         }
     }
 
+    const addVoterToPoll = async (pollId, voterAddress) => {
+        try {
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const poll = await contract.addVoterToPoll(pollId, voterAddress);
+            poll.wait();
+        } catch (error) {
+            seterror("Error adding voter to poll");
+            console.log(error);
+        }
+    }
+
+    const addCandidateToPoll = async (pollId, candidateAddress) => {
+        try {
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const poll = await contract.addCandidateToPoll(pollId, candidateAddress);
+            poll.wait();
+        } catch (error) {
+            seterror("Error adding candidate to poll");
+            console.log(error);
+        }
+    }
+
 
     const votingTitle = "Voting Contract";
     return (
@@ -289,18 +364,24 @@ export const VotingProvider = ({ children }) => {
                 votingTitle,
                 createVoter,
                 getVoterList,
+                getAllVoterAddress,
                 checkIfWalletIsConnected,
                 connectWallet,
                 uploadToIPFS,
                 voterArray,
+                voterAddress,
                 addCandidate,
                 getCandidateList,
+                getCandidateAddress,
+                candidatAddressArrayList,
                 candiadateArray,
                 pollArray,
                 createNewPoll,
                 getAllPolls,
                 getPollData,
-                detailPoll
+                detailPoll,
+                addVoterToPoll,
+                addCandidateToPoll
             }}
         >
             {children}
