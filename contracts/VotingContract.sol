@@ -172,7 +172,8 @@ contract Create {
 
     function castVote(
         address _cadidateAddress,
-        uint256 _candidateVoteID
+        uint256 _candidateVoteID,
+        uint256 _pollId
     ) external {
         Voters storage voter = voters[msg.sender];
 

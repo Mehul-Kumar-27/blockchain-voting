@@ -68,8 +68,8 @@ const HomePage = () => {
           </p>
         </div>
 
-        <Link href="/candidates/candidateRegistration">
-        <button className="cta-button" >Register New Candidate</button>
+        <Link href="/poll/pollList">
+        <button className="cta-button" >View Ongoing Polls</button>
         </Link>
         <Link href="/voters/allowedVoter">
           <button className="cta-button">Register New Voter</button>

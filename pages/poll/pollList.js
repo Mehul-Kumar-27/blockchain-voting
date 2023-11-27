@@ -18,44 +18,28 @@ const PollList = () => {
     }, []);
 
     return (
-        <div className={Styles.area}>
-            <div className={Styles.circles}>
-                <ul>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                </ul>
+        <div className={Styles.pollListContainer}>
+            <div className={Styles.headerSection}>
+                <h1 className={Styles.pageHeading}>Created Polls</h1>
+                <Link href="createPoll">
+                    <button className={Styles.newPollButton} type="button">
+                        Add a new poll
+                    </button>
+                </Link>
             </div>
-            <div className={Styles.pollList}>
-                <div className={Styles.poll__list__heading}>
-                    <h2>Created Polls </h2>
-                    <Link href="createPoll">
-                        <button className={Styles.new__poll__button} type="button">
-                            Add a new poll
-                        </button>
-                    </Link>
 
 
-                </div>
-
-                <div className={Styles.poll__list__container}>
-                    {pollArray.map((poll, index) => (
-                        <div key={index} className={Styles.poll__card}>
-                            <div className={Styles.poll__card__content}>
-                                <p className={Styles.poll__card__title}>{poll.title}</p>
-                                <p className={Styles.poll__card__description}>{poll.description}</p>
-                                <p className={Styles.poll__card__isActive}></p>
+            <div className={Styles.pollListGrid}>
+                {pollArray.map((poll, index) => (
+                    <Link key={index} href={`/poll/pollDetails?id=${poll._pollId}`} passHref>
+                        <div key={index} className={Styles.pollCard}>
+                            <div className={Styles.pollCardContent}>
+                                <p className={Styles.pollCardTitle}>{poll.title}</p>
+                                <p className={Styles.pollCardDescription}>{poll.description}</p>
                             </div>
                         </div>
-                    ))}
-                </div>
+                    </Link>
+                ))}
             </div>
         </div>
     );

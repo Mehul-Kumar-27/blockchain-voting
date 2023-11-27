@@ -37,6 +37,7 @@ export const VotingProvider = ({ children }) => {
     ////////////////////////////////
 
     const [pollArray, setpollArray] = useState([]);
+    const [detailPoll, setdetailPoll] = useState();
 
     //// CONNECT METAMASK
 
@@ -234,7 +235,7 @@ export const VotingProvider = ({ children }) => {
 
             poll.wait();
 
-            router.push("/pollList");
+            router.push("/poll/pollList");
         } catch (error) {
             console.log(error);
             seterror("Error creating poll");
@@ -264,6 +265,22 @@ export const VotingProvider = ({ children }) => {
         }
     }
 
+    const getPollData = async (id) => {
+        try {
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const pollData = await contract.getPollData(id);
+            setdetailPoll(pollData);
+        } catch (error) {
+            seterror("Error fetching the poll");
+            console.log(error);
+        }
+    }
+
 
     const votingTitle = "Voting Contract";
     return (
@@ -282,6 +299,8 @@ export const VotingProvider = ({ children }) => {
                 pollArray,
                 createNewPoll,
                 getAllPolls,
+                getPollData,
+                detailPoll
             }}
         >
             {children}
