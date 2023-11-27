@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { VoterContext } from "@/context/Voter";
-import Styles from "../styles/allowedVoterList.module.css";
-import addImag from "../assets/images/3.jpg";
+import Styles from "styles/allowedVoterList.module.css";
+import addImag from "assets/images/3.jpg";
 
 import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
@@ -17,7 +17,9 @@ const allowedVoter = () => {
   const [inputForm, setinputForm] = useState({
     name: "",
     address: "",
-    position: "",
+    age: "",
+    email: "",
+    pincode: "",
   });
 
   const { uploadToIPFS, createVoter } = useContext(VoterContext);
@@ -47,7 +49,7 @@ const allowedVoter = () => {
     <div className={Styles.area}>
       <div className={Styles.circles}>
         <ul>
-        <li></li>
+          <li></li>
           <li></li>
           <li></li>
           <li></li>
@@ -164,36 +166,28 @@ const allowedVoter = () => {
               }
             />
             <Input
-              inputType="text"
-              title="Position"
-              placeholder="Voter Position"
+              inputType="number"
+              title="Age"
+              placeholder="Voter Age"
               handleClick={(e) =>
-                setinputForm({ ...inputForm, position: e.target.value })
+                setinputForm({ ...inputForm, age: e.target.value })
               }
             />
             <Input
               inputType="text"
-              title="Phone Number"
-              placeholder="Phone Number"
-            // handleClick={(e) =>
-            //   setinputForm({ ...inputForm, position: e.target.value })
-            // }
-            />
-            <Input
-              inputType="text"
-              title="AGE"
-              placeholder="Enter The Age of Voter"
-            // handleClick={(e) =>
-            //   setinputForm({ ...inputForm, position: e.target.value })
-            // }
+              title="Email"
+              placeholder="Voter Email"
+            handleClick={(e) =>
+              setinputForm({ ...inputForm, email: e.target.value })
+            }
             />
             <Input
               inputType="text"
               title="Address PINCODE"
-              placeholder="INCODE of Residence"
-            // handleClick={(e) =>
-            //   setinputForm({ ...inputForm, position: e.target.value })
-            // }
+              placeholder="PINCODE of Residence"
+            handleClick={(e) =>
+              setinputForm({ ...inputForm, pincode: e.target.value })
+            }
             />
             <div className={Styles.Button}>
               <Button btnName="Authorize" handleClick={() => createVoter(inputForm, profileURL, router)} />

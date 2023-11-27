@@ -34,6 +34,10 @@ export const VotingProvider = ({ children }) => {
     const [voterLength, setvoterLength] = useState("");
     const [voterAddress, setvoterAddress] = useState([]);
 
+    ////////////////////////////////
+
+    const [pollArray, setpollArray] = useState([]);
+
     //// CONNECT METAMASK
 
     const checkIfWalletIsConnected = async () => {
@@ -79,14 +83,15 @@ export const VotingProvider = ({ children }) => {
 
     const createVoter = async (inputForm, fileUrl, router) => {
         try {
-            const { name, address, position } = inputForm;
-            console.log(name, address, position, fileUrl);
+            const { name, address, age, email, pincode } = inputForm;
+            console.log(name, address, age, email, pincode, fileUrl);
 
-            if (!name || !address || !position) {
+            if (!name || !address || !email || !pincode || !age) {
+
                 return seterror("Please fill all the fields");
             }
 
-            const age = "20";
+
 
             const web3Modle = new Web3Modal();
             const connection = await web3Modle.connect();
@@ -102,7 +107,7 @@ export const VotingProvider = ({ children }) => {
 
 
             const voter = await contract
-                .createVoter(name, 20, fileUrl, fileUrl, address)
+                .createVoter(name, age, address, email, pincode)
                 .catch((err) => {
                     seterror("Error creating voter");
                     console.log(err);
@@ -112,7 +117,7 @@ export const VotingProvider = ({ children }) => {
             console.log("6");
             console.log(voter);
 
-            router.push("/voterList");
+            router.push("/voters/voterList");
         } catch (error) {
             console.log(error);
         }
@@ -145,29 +150,30 @@ export const VotingProvider = ({ children }) => {
 
     const addCandidate = async (inputForm, fileUrl, router) => {
         try {
-            const { name, address, manifesto, age } = inputForm;
-            console.log(name, address, manifesto, age, fileUrl);
+            const { name, address, manifesto, age, pincode, email } = inputForm;
+            console.log(name, address, manifesto, age, pincode, email, fileUrl);
 
-            if (!name || !address || !manifesto) {
+            if (!name || !address || !manifesto || !age || !pincode || !email) {
                 return seterror("Please fill all the fields");
             }
+            console.log("1");
 
             const web3Modle = new Web3Modal();
             const connection = await web3Modle.connect();
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
             const contract = fetchContract(signer);
-
+            console.log("2");
             const candidate = await contract
-                .setCandidate(address, name, age, fileUrl, manifesto)
+                .setCandidate(address, name, age, email, manifesto, pincode)
                 .catch((err) => {
                     seterror("Error creating candidate");
                     console.log(err);
                 });
-
+            console.log("3");
             candidate.wait();
 
-            router.push("/candidateList");
+            router.push("/candidates/candidateList");
         } catch (error) {
             seterror("Error creating candidate");
             console.log(error);
@@ -202,11 +208,63 @@ export const VotingProvider = ({ children }) => {
         }
     };
 
+    ///////////////////////////////////////////
 
-    // useEffect(() => {
-    //     console.log("useEffect for the get voter list");
-    //     getVoterList();
-    // },[]);
+    const createNewPoll = async (inputForm, router) => {
+        try {
+            const { title, description } = inputForm;
+            console.log(title, description);
+
+            if (!title || !description) {
+                return seterror("Please fill all the fields");
+            }
+
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const poll = await contract
+                .createPoll(title, description, [], [], 0, 0)
+                .catch((err) => {
+                    seterror("Error creating poll");
+                    console.log(err);
+                });
+
+            poll.wait();
+
+            router.push("/pollList");
+        } catch (error) {
+            console.log(error);
+            seterror("Error creating poll");
+        }
+    };
+
+    const getAllPolls = async () => {
+        try {
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const pollAddressList = await contract.getAllPollesIds();
+            console.log(pollAddressList);
+            const pollDataPromises = pollAddressList.map(async (el) => {
+                return contract.getPollData(el);
+            })
+
+            const pollData = await Promise.all(pollDataPromises);
+            setpollArray(pollData);
+            console.log(pollData);
+        } catch (error) {
+            console.log(error);
+            seterror("Error fetching the poll");
+        }
+    }
+
+
     const votingTitle = "Voting Contract";
     return (
         <VoterContext.Provider
@@ -221,6 +279,9 @@ export const VotingProvider = ({ children }) => {
                 addCandidate,
                 getCandidateList,
                 candiadateArray,
+                pollArray,
+                createNewPoll,
+                getAllPolls,
             }}
         >
             {children}

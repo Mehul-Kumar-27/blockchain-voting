@@ -68,10 +68,10 @@ const HomePage = () => {
           </p>
         </div>
 
-        {/* <Link href="/allowedVoter"> */}
-        <button className="cta-button" onClick={getCandidateList}>Go to Second Page</button>
-        {/* </Link> */}
-        <Link href="/allowedVoter">
+        <Link href="/candidates/candidateRegistration">
+        <button className="cta-button" >Register New Candidate</button>
+        </Link>
+        <Link href="/voters/allowedVoter">
           <button className="cta-button">Register New Voter</button>
         </Link>
       </div>
@@ -248,6 +248,7 @@ const HomePage = () => {
 
         .cta-button {
           background-color: #4caf50;
+          margin: 10px;
           color: white;
           padding: 10px 20px;
           font-size: 1em;

@@ -3,8 +3,9 @@
     justify-content: center;
     position: relative;
     width: 100%;
-    height: 160vh;
+    height: 100vh;
     overflow: hidden;
+    padding: 3rem;
   }
   
   .circles li {
@@ -107,52 +108,33 @@
     }
   }
 
-  /* ///////////////////////// */
-
-  .register__candidate{
-    text-align: center;
-    padding: 2rem;
-  }
-  .register__candidate h1{
-    font-family: "Poppins", sans-serif;
-  } 
-  .candidate{
+  .createPoll {
     background-color: #231e39;
     border-radius: 25px;
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.25);
-    color: wheat;
-    padding: 2rem;
+    color: white;
+    padding: 4rem;
     width: 80vw;
   }
-  .candidate__container__box {
-    text-align: center;
-    border: 1px dotted #9a02ac;
-    border-radius: 40px;
-    padding: 1rem;
-  }
 
-  .candidate__container__box p {
-    line-height: 0.5s;
-    color: white;
+  .createPoll h1{
+    font-family: "Poppins", sans-serif;
+    text-align: center;
+    padding-bottom: 1rem;
+  } 
+  .createPoll__form {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+
+    padding-left: 3rem;
   }
   
-  .candidate__container__box__div__info p{
-    line-height: 0.5s;
-    color: white;
-    text-align: center;
-    padding-bottom: 1rem;
-    font-family: "Poppins", sans-serif;
+  .Button {
+    align-items: center;
+    padding-left: 17rem;
+    margin-top: 20px; /* Add margin for spacing */
   }
 
-  .candidate__container__box__div__image{
-    padding: .5rem;
-  }
 
-  .candidate__container h1 {
-    line-height: 0.5s;
-    color: white;
-    text-align: center;
-    padding-bottom: 1rem;
-    font-family: "Poppins", sans-serif;
-  }
 
