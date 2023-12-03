@@ -173,9 +173,13 @@ contract Create {
     function castVote(
         address _cadidateAddress,
         uint256 _candidateVoteID,
-        uint256 _pollId
+        uint256 pollId
     ) external {
         Voters storage voter = voters[msg.sender];
+
+        Candidate storage candidate = candidates[_cadidateAddress];
+
+        require(isValidVoter(pollId, msg.sender), "You are not a valid voter");
 
         require(!voter.voted, "Already voted.");
 
@@ -186,7 +190,20 @@ contract Create {
 
         votetedVoters.push(msg.sender);
 
-        candidates[_cadidateAddress].voteCount += voter.allowed;
+        candidate.voteCount += voter.allowed;
+    }
+
+    function isValidVoter(
+        uint256 pollId,
+        address _voter
+    ) internal view returns (bool) {
+        Poll storage poll = polls[pollId];
+        for (uint256 i = 0; i < poll.voters.length; i++) {
+            if (poll.voters[i] == _voter) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function getVoterLenghth() public view returns (uint256) {
@@ -218,6 +235,8 @@ contract Create {
         uint256 votersVotedCount;
         bool isActive;
     }
+
+    mapping(uint256 => mapping(address => uint256)) pollResuls;
 
     event PollCreated(
         uint256 indexed _pollId,
@@ -320,4 +339,22 @@ contract Create {
 
         poll.candidates.push(_candidateAddress);
     }
+
+    function hasVoted(
+        uint256 pollId,
+        address voterAddress
+    ) public view returns (bool) {
+        Poll storage poll = polls[pollId];
+        require(poll.isActive == false, "Poll is still active");
+
+        for (uint256 i = 0; i < poll.votersVotedCount; i++) {
+            if (poll.voters[i] == voterAddress) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    
 }

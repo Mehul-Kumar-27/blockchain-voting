@@ -1,0 +1,106 @@
+.CastVoteButton {
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    margin-left: 10rem;
+    align-self: flex-end;
+    background-color: transparent;
+    border: 1px dotted #ccc;
+    padding: 0.5rem 1rem;
+    color: #45a049;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  .CastVoteButton:hover {
+    background-color: #45a049;
+    color: #fff;
+    
+  }
+
+  .CastVotePageHeader{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-left: 6rem;
+    margin-right: 6rem;
+    align-items: center;
+    text-align: center;
+    align-self: flex-end;
+    background-color: transparent;
+    border: 1px dotted #ccc;
+    padding: 0.5rem 1rem;
+    color: white;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .CandidateList{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 2rem;
+  }
+  .CandidatesAvailable{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+    align-items: center;
+    align-self: flex-end;
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .finishVoting{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 6rem;
+    padding-right: 6rem;
+    padding-top: .5rem;
+    color: #fff;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .CandidateCard{
+    background-color: #231e39;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 20px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    padding: 16px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+  .CandidateCard:hover{
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 0 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .CandidateCardContent{
+    padding: 10px;
+  }
+
+  .CandidateCardName{
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #fff;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .CandidateCardAddress{
+    font-size: 1rem;
+    color: #fff;
+    margin-top: 1rem;
+    overflow-wrap: break-word;
+    font-family: "Poppins", sans-serif;
+  }
+

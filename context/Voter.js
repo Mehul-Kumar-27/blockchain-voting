@@ -230,6 +230,28 @@ export const VotingProvider = ({ children }) => {
         }
     };
 
+    const getCandidateDataForVoting = async (addresses) => {
+        const web3Modle = new Web3Modal();
+        const connection = await web3Modle.connect();
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = fetchContract(signer);
+
+        try {
+            const candidateDataPromises = addresses.map(async (el) => {
+                return contract.getCandidateData(el).catch((err) => {
+                    seterror("Error creating candidate 2");
+                    console.log(err);
+                });
+            });
+
+            const candidateData = await Promise.all(candidateDataPromises);
+            setcandiadateArray(candidateData);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const getCandidateAddress = async () => {
         const web3Modle = new Web3Modal();
         const connection = await web3Modle.connect();
@@ -357,6 +379,25 @@ export const VotingProvider = ({ children }) => {
     }
 
 
+    ////////////////////////////////////////////
+
+    const castVoteToCandidate = async (candidateAddress, candidateId, pollId) => {
+        try {
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const castVote = await contract.castVote(candidateAddress, candidateId, pollId);
+            castVote.wait();
+        } catch (error) {
+            seterror("Error adding candidate to poll");
+            console.log(error);
+        }
+    }
+
+
     const votingTitle = "Voting Contract";
     return (
         <VoterContext.Provider
@@ -381,7 +422,9 @@ export const VotingProvider = ({ children }) => {
                 getPollData,
                 detailPoll,
                 addVoterToPoll,
-                addCandidateToPoll
+                addCandidateToPoll,
+                getCandidateDataForVoting,
+                castVoteToCandidate
             }}
         >
             {children}

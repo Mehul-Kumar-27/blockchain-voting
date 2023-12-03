@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
-
+import Link from "next/link";
 import { VoterContext } from "@/context/Voter";
 import Styles from "styles/pollDetail.module.css";
 
@@ -117,11 +117,11 @@ const PollDetail = () => {
                     <p className={Styles.pollVoterCount}>
                         Candidates Registered : {detailPoll.candidates.length}
                     </p>
-                    {/* <Link href="createPoll"> */}
+                    <Link key={detailPoll._pollId}href={`/poll/castVotePage?id=${detailPoll._pollId}`} passHref>
                         <button className={Styles.newPollButton} type="button">
                             Go to Voting Section
                         </button>
-                    {/* </Link> */}
+                    </Link>
                 </div>
 
                 <div className={Styles.availableCandidates}>
