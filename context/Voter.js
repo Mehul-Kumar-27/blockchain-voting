@@ -43,6 +43,11 @@ export const VotingProvider = ({ children }) => {
     const [pollArray, setpollArray] = useState([]);
     const [detailPoll, setdetailPoll] = useState();
 
+
+    ////////////////////////////////
+
+    const [voterVotedCandidate, setvoterVotedCandidate] = useState();
+
     //// CONNECT METAMASK
 
     const checkIfWalletIsConnected = async () => {
@@ -397,6 +402,42 @@ export const VotingProvider = ({ children }) => {
         }
     }
 
+    ////////////////////////////////////////////
+
+    const closePoll = async (pollId) => {
+        try {
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const closePoll = await contract.closePoll(pollId);
+            closePoll.wait();
+        } catch (error) {
+            seterror("Error adding candidate to poll");
+            console.log(error);
+        }
+    }
+
+    ////////////////////////////////////////////
+
+    const verifyVote = async (pollId) => {
+        try {
+            const web3Modle = new Web3Modal();
+            const connection = await web3Modle.connect();
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const contract = fetchContract(signer);
+
+            const candidateVoterVotedTO = await contract.verifyVote(pollId);
+            setvoterVotedCandidate(candidateVoterVotedTO);
+        } catch (error) {
+            seterror("Error adding candidate to poll");
+            console.log(error);
+        }
+    }
+
 
     const votingTitle = "Voting Contract";
     return (
@@ -424,7 +465,11 @@ export const VotingProvider = ({ children }) => {
                 addVoterToPoll,
                 addCandidateToPoll,
                 getCandidateDataForVoting,
-                castVoteToCandidate
+                castVoteToCandidate,
+                closePoll,
+                verifyVote,
+                voterVotedCandidate,
+                setvoterVotedCandidate,
             }}
         >
             {children}

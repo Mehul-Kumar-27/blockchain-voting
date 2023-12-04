@@ -11,7 +11,7 @@ const CastVotePage = () => {
     const { id } = router.query;
     const [pollData, setPollData] = useState(null);
 
-    const { castVoteToCandidate, getPollData, detailPoll, getCandidateDataForVoting, candiadateArray } = useContext(VoterContext);
+    const { verifyVote, voterVotedCandidate, closePoll, castVoteToCandidate, getPollData, detailPoll, getCandidateDataForVoting, candiadateArray } = useContext(VoterContext);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,6 +28,7 @@ const CastVotePage = () => {
         }
         candidateData();
     }, [detailPoll]);
+
 
     const fetchPollData = async () => {
         console.log("id", id);
@@ -52,6 +53,16 @@ const CastVotePage = () => {
         await castVoteToCandidate(candidateAddress, candidateId, pollId);
     }
 
+
+    const closePollFunction = async () => {
+        await closePoll(Number(detailPoll._pollId));
+        await fetchPollData()
+    }
+
+    const verifyVoteFunction = async () => {
+        await verifyVote(Number(detailPoll._pollId));
+    }
+
     return (
         <div className={Styles.CastVotePage}>
             <div className={Styles.CastVotePageHeader}>
@@ -65,16 +76,35 @@ const CastVotePage = () => {
 
                     <h2>Candidates Available</h2>
                     <div className={Styles.finishVotingButton}>
-                        <button
-                            className={Styles.CastVoteButton}
-                            type="button"
-                        >
-                            Finish Voting
-                        </button>
+                        {detailPoll && detailPoll.isActive ? (
+                            <button
+                                className={Styles.CastVoteButton}
+                                type="button"
+                                onClick={() => closePollFunction()}
+                            >
+                                Finish Voting
+                            </button>
+                        ) : (
+                            <button
+                                className={Styles.CastVoteButton}
+                                type="button"
+                                onClick={() => { verifyVoteFunction() }}
+                            >
+                                Verify Vote
+                            </button>
+                        )}
                     </div>
 
 
 
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10vh' }}>
+                    {voterVotedCandidate ? (
+                        <h1>You have voted to {voterVotedCandidate.name}</h1>
+                    ) : (
+                        <h1></h1>
+                    )}
                 </div>
 
                 <div className={Styles.CandidateList}>
@@ -85,14 +115,20 @@ const CastVotePage = () => {
                                 <p className={Styles.CandidateCardName}>{candidate.name}</p>
                                 <p className={Styles.CandidateCardAddress}>{candidate._address}</p>
                                 <p className={Styles.CandidateCardAddress}>Manefesto : {candidate.manefesto}</p>
-                                <p className={Styles.CandidateCardAddress}>Current Vote Count : {Number(candidate.voteCount)}</p>
-                                <button
-                                    className={Styles.CastVoteButton}
-                                    type="button"
-                                    onClick={() => castVote(candidate._address, Number(candidate._candidateId), Number(pollData._pollId))}
-                                >
-                                    Cast Vote
-                                </button>
+                                {detailPoll && detailPoll.isActive ? (
+                                    <p>Voting is ongoing</p>
+                                ) : (
+                                    <p className={Styles.CandidateCardAddress}>Current Vote Count: {Number(candidate.voteCount)}</p>
+                                )}
+                                {detailPoll && detailPoll.isActive && (
+                                    <button
+                                        className={Styles.CastVoteButton}
+                                        type="button"
+                                        onClick={() => castVote(candidate._address, Number(candidate._candidateId), Number(pollData._pollId))}
+                                    >
+                                        Cast Vote
+                                    </button>
+                                )}
 
                             </div>
                         </div>

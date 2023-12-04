@@ -29,6 +29,7 @@ contract Create {
         string email;
         string manefesto;
         string pincode;
+        uint256[] hashAddresses;
     }
 
     event CandidateCreated(
@@ -64,6 +65,7 @@ contract Create {
         uint256 vote;
         string email;
         string pincode;
+        uint256[] hashAddresses;
     }
 
     event VoterCreated(
@@ -170,6 +172,30 @@ contract Create {
         );
     }
 
+    function addressToUint256(address _address) public pure returns (uint256) {
+        return uint256(uint160(_address));
+    }
+
+    function uint256ToAddress(uint256 _uint256) public pure returns (address) {
+        return address(uint160(_uint256));
+    }
+
+    function verifyVote(uint256 pollId) public view returns (Candidate memory) {
+        uint256 hashAddress = addressToUint256(msg.sender);
+        Poll storage poll = polls[pollId];
+
+        for (uint256 i = 0; i < poll.candidates.length; i++) {
+            Candidate storage candidate = candidates[poll.candidates[i]];
+            for (uint256 j = 0; j < candidate.hashAddresses.length; j++) {
+                if (candidate.hashAddresses[j] == hashAddress) {
+                    return candidate;
+                }
+            }
+        }
+
+        revert("Your Vote is not found");
+    }
+
     function castVote(
         address _cadidateAddress,
         uint256 _candidateVoteID,
@@ -191,6 +217,11 @@ contract Create {
         votetedVoters.push(msg.sender);
 
         candidate.voteCount += voter.allowed;
+
+        uint256 hashAddress = addressToUint256(msg.sender);
+
+        voter.hashAddresses.push(hashAddress);
+        candidate.hashAddresses.push(hashAddress);
     }
 
     function isValidVoter(
@@ -235,8 +266,6 @@ contract Create {
         uint256 votersVotedCount;
         bool isActive;
     }
-
-    mapping(uint256 => mapping(address => uint256)) pollResuls;
 
     event PollCreated(
         uint256 indexed _pollId,
@@ -291,7 +320,7 @@ contract Create {
             _candidates,
             _startDate,
             _endDate,
-            false,
+            true,
             0
         );
     }
@@ -302,17 +331,6 @@ contract Create {
 
     function getPollData(uint256 id) public view returns (Poll memory) {
         return polls[id];
-    }
-
-    function startAPoll(uint256 id) public {
-        require(
-            msg.sender == votingOrganizer,
-            "Only Organizer can add candidate"
-        );
-
-        Poll storage poll = polls[id];
-
-        poll.isActive = true;
     }
 
     function addVoterToPoll(uint256 pollId, address _voterAddress) public {
@@ -340,21 +358,16 @@ contract Create {
         poll.candidates.push(_candidateAddress);
     }
 
-    function hasVoted(
-        uint256 pollId,
-        address voterAddress
-    ) public view returns (bool) {
+    function closePoll(uint256 pollId) public {
         Poll storage poll = polls[pollId];
-        require(poll.isActive == false, "Poll is still active");
 
-        for (uint256 i = 0; i < poll.votersVotedCount; i++) {
-            if (poll.voters[i] == voterAddress) {
-                return true;
-            }
+        if (poll.isActive == true) {
+            require(
+                msg.sender == votingOrganizer,
+                "Only Organizer can close the poll"
+            );
+
+            poll.isActive = false;
         }
-
-        return false;
     }
-
-    
 }
